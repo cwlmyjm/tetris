@@ -17,6 +17,10 @@ public:
 	void PrintCaseOnScreen(int id);
 	void PrintCaseToFile(int id, std::fstream& file);
 
+public:
+	TetrisBoard();
+	void ResetColumns(int columns);
+
 private:
 	void AddFourRows();
 	bool CanPutItem(TetrisItem* itemData, int row, int colum);
@@ -26,7 +30,7 @@ private:
 	void PrintBoard();
 
 private:
-	std::vector<std::shared_ptr<TetrisRow>> m_board;
+	std::vector<std::unique_ptr<TetrisRow>> m_board;
 	int m_rowCount = 0;
 	int m_columns = 0;
 	int m_score = 0;

@@ -13,10 +13,10 @@
 TetrisBoard::TetrisBoard(int columns)
 	: m_columns(columns)
 {
-	m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
-	m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
-	m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
-	m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
+	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
+	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
+	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
+	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
 	m_rowCount = 4;
 }
 
@@ -86,21 +86,38 @@ void TetrisBoard::PrintCaseToFile(int id, fstream& file)
 	//PrintBoard();
 }
 
+TetrisBoard::TetrisBoard()
+{
+
+}
+
+void TetrisBoard::ResetColumns(int columns)
+{
+	m_columns = columns;
+	m_board.clear();
+
+	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
+	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
+	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
+	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
+	m_rowCount = 4;
+}
+
 void TetrisBoard::AddFourRows()
 {
 	if (m_rowCount < Threshold)
 	{
-		m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
-		m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
-		m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
-		m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
 	}
 	else
 	{
-		m_board.push_back(std::move(std::make_shared<RowOverThreshold>(m_columns)));
-		m_board.push_back(std::move(std::make_shared<RowOverThreshold>(m_columns)));
-		m_board.push_back(std::move(std::make_shared<RowOverThreshold>(m_columns)));
-		m_board.push_back(std::move(std::make_shared<RowOverThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_unique<RowOverThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_unique<RowOverThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_unique<RowOverThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_unique<RowOverThreshold>(m_columns)));
 	}
 	m_rowCount += 4;
 }

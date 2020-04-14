@@ -48,6 +48,7 @@ int main()
 	int caseCount = 0;
 	input >> caseCount;
 	int total = 0;
+	auto board = std::make_unique<TetrisBoard>();
 	for (int i = 0; i < caseCount; i++)
 	{
 		// << read from file
@@ -55,7 +56,7 @@ int main()
 		int cubeCount = 0;
 		input >> columns;
 		input >> cubeCount;
-		auto board = new TetrisBoard(columns);
+		board->ResetColumns(columns);
 		for (int j = 0; j < cubeCount; j++)
 		{
 			char type = 'I';
@@ -70,7 +71,6 @@ int main()
 		//board->PrintCaseOnScreen(i);
 		//board->PrintCaseToFile(i, output);
 		total += board->GetScore();
-		delete board;
 	}
 
 	input.close();
