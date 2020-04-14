@@ -95,6 +95,7 @@ void TetrisBoard::ResetColumns(int columns)
 {
 	m_columns = columns;
 	m_board.clear();
+	m_score = 0;
 
 	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
 	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
