@@ -1,12 +1,15 @@
 #pragma once
 #include "TetrisRow.h"
-class MyBitVector :
+#include <unordered_set>
+#include <vector>
+
+class MixedBitVector :
 	public TetrisRow
 {
 public:
-	MyBitVector(int size);
+	MixedBitVector(int size);
 
-	~MyBitVector();
+	~MixedBitVector();
 
 	virtual bool GetValue(int index);
 
@@ -15,9 +18,11 @@ public:
 	virtual bool AllTrue();
 
 private:
-	char* m_data = nullptr;
+	std::unordered_set<int> m_data_set;
+	std::vector<bool> m_data_vector;
 	int m_size = 0;
 	int m_total = 0;
+	bool m_use_set = true;
 
 };
 

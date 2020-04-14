@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="BitSet.cpp" />
     <ClCompile Include="BitVector.cpp" />
+    <ClCompile Include="MixedBitVector.cpp" />
     <ClCompile Include="MyBitVector.cpp" />
     <ClCompile Include="Tetris.cpp" />
     <ClCompile Include="TetrisBoard.cpp" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="BitSet.h" />
     <ClInclude Include="BitVector.h" />
+    <ClInclude Include="MixedBitVector.h" />
     <ClInclude Include="MyBitVector.h" />
     <ClInclude Include="TetrisBoard.h" />
     <ClInclude Include="TetrisItem.h" />

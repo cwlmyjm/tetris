@@ -17,35 +17,25 @@ MyBitVector::~MyBitVector()
 
 bool MyBitVector::GetValue(int index)
 {
-	int a = index / 8;
-	int b = index % 8;
+	int a = index >> 3;
+	int b = index & 0b111;
 
 	return m_data[a] & (0b1 << b);
 }
 
 void MyBitVector::SetValue(int index, bool value)
 {
-	int a = index / 8;
-	int b = index % 8;
+	int a = index >> 3;
+	int b = index & 0b111;
 
 	if (value)
 	{
+		m_total++;
 		m_data[a] |= (0b1 << b);
-	}
-	else
-	{
-		m_data[a] &= ~(0b1 << b);
 	}
 }
 
 bool MyBitVector::AllTrue()
 {
-	for (int i = 0; i < m_size; i++)
-	{
-		if (!GetValue(i))
-		{
-			return false;
-		}
-	}
-	return true;
+	return m_total == m_size;
 }

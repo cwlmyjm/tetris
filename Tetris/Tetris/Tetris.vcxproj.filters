@@ -33,6 +33,9 @@
     <ClCompile Include="MyBitVector.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MixedBitVector.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TetrisBoard.h">
@@ -51,6 +54,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MyBitVector.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MixedBitVector.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

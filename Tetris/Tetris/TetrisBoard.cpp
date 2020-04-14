@@ -3,18 +3,19 @@
 #include "BitSet.h"
 #include "BitVector.h"
 #include "MyBitVector.h"
+#include "MixedBitVector.h"
 #include "TetrisItem.h"
 
-#define Row MyBitVector
+#define Row MixedBitVector
 
 TetrisBoard::TetrisBoard(int columns)
+	: m_columns(columns)
 {
-	m_columns = columns;
-	m_rowCount = 10;
-	for (int i = 0; i < 10; i++)
-	{
-		m_board.push_back(std::shared_ptr<TetrisRow>(new Row(m_columns)));
-	}
+	m_rowCount = 4;
+	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
+	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
+	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
+	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
 }
 
 
@@ -52,7 +53,8 @@ int TetrisBoard::GetHeightOfColumns(int column)
 {
 	for (int i = 0; i < m_rowCount; i++)
 	{
-		if (m_board[m_rowCount - 1 - i]->GetValue(column))
+		int index = m_rowCount - 1 - i;
+		if (m_board[index]->GetValue(column))
 		{
 			return m_rowCount - i;
 		}
@@ -85,10 +87,10 @@ void TetrisBoard::PrintCaseToFile(int id, fstream& file)
 void TetrisBoard::AddFourRows()
 {
 	m_rowCount += 4;
-	m_board.push_back(std::shared_ptr<TetrisRow>(new Row(m_columns)));
-	m_board.push_back(std::shared_ptr<TetrisRow>(new Row(m_columns)));
-	m_board.push_back(std::shared_ptr<TetrisRow>(new Row(m_columns)));
-	m_board.push_back(std::shared_ptr<TetrisRow>(new Row(m_columns)));
+	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
+	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
+	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
+	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
 }
 
 bool TetrisBoard::CanPutItem(TetrisItem* item, int row, int colum)

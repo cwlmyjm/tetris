@@ -19,6 +19,7 @@ public:
 private:
 	std::unordered_set<int> m_data;
 	int m_size = 0;
+	int m_total = 0;
 
 };
 

@@ -19,10 +19,14 @@ bool BitVector::GetValue(int index)
 
 void BitVector::SetValue(int index, bool value)
 {
-	m_data[index] = value;
+	if (value)
+	{
+		m_total++;
+		m_data[index] = value;
+	}
 }
 
 bool BitVector::AllTrue()
 {
-	return std::all_of(m_data.cbegin(), m_data.cend(), [](bool value) {return value; });
+	return m_total == m_size;
 }

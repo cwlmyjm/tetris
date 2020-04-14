@@ -19,11 +19,12 @@ void BitSet::SetValue(int index, bool value)
 {
 	if (value)
 	{
+		m_total++;
 		m_data.insert(index);
 	}
 }
 
 bool BitSet::AllTrue()
 {
-	return m_data.size() == m_size;
+	return m_total == m_size;
 }
