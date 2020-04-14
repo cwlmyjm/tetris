@@ -6,16 +6,18 @@
 #include "MixedBitVector.h"
 #include "TetrisItem.h"
 
-#define Row MixedBitVector
+#define Threshold 1000
+#define RowBelowThreshold BitVector
+#define RowOverThreshold MixedBitVector
 
 TetrisBoard::TetrisBoard(int columns)
 	: m_columns(columns)
 {
+	m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
+	m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
+	m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
+	m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
 	m_rowCount = 4;
-	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
-	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
-	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
-	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
 }
 
 
@@ -86,11 +88,21 @@ void TetrisBoard::PrintCaseToFile(int id, fstream& file)
 
 void TetrisBoard::AddFourRows()
 {
+	if (m_rowCount < Threshold)
+	{
+		m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_shared<RowBelowThreshold>(m_columns)));
+	}
+	else
+	{
+		m_board.push_back(std::move(std::make_shared<RowOverThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_shared<RowOverThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_shared<RowOverThreshold>(m_columns)));
+		m_board.push_back(std::move(std::make_shared<RowOverThreshold>(m_columns)));
+	}
 	m_rowCount += 4;
-	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
-	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
-	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
-	m_board.push_back(std::move(std::make_shared<Row>(m_columns)));
 }
 
 bool TetrisBoard::CanPutItem(TetrisItem* item, int row, int colum)
