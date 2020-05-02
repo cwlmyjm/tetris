@@ -1,10 +1,11 @@
 #include "TetrisItem.h"
+#include <assert.h>
 
-std::unordered_map<TetrisItemType, std::unordered_map<TetrisItemRotation, TetrisItem>> TetrisItem::itemsMap;
+std::array<TetrisItem, 28> TetrisItem::itemsMap;
 
-TetrisItem& TetrisItem::GetTetrisItem(TetrisItemType type, TetrisItemRotation rotation)
+TetrisItem& TetrisItem::GetTetrisItem(const TetrisItemType& type, const TetrisItemRotation& rotation)
 {
-	return itemsMap[type][rotation];
+	return itemsMap[TetrisItemTypeRotation2Int(type, rotation)];
 }
 
 void TetrisItem::InitTetrisItemsMap()
@@ -18,14 +19,57 @@ void TetrisItem::InitTetrisItemsMap()
 	std::vector<TetrisItemRotation> rotations = { R0, R90, R180, R270 };
 	for (auto& type : types)
 	{
-		std::unordered_map<TetrisItemRotation, TetrisItem> itemMap;
 		for (auto& rotation : rotations)
 		{
-			itemMap.emplace(rotation, TetrisItem(type, rotation));
+			itemsMap[TetrisItemTypeRotation2Int(type, rotation)] = std::move(TetrisItem(type, rotation));
 		}
-		itemsMap.emplace(type, itemMap);
 	}
 	itemsMapHasInited = true;
+}
+
+int TetrisItem::TetrisItemType2Int(const TetrisItemType& type)
+{
+	switch (type)
+	{
+	case I:
+		return 0;
+	case J:
+		return 1;
+	case L:
+		return 2;
+	case O:
+		return 3;
+	case S:
+		return 4;
+	case T:
+		return 5;
+	case Z:
+		return 7;
+	}
+	assert(false);
+	return 0;
+}
+
+int TetrisItem::TetrisItemRotation2Int(const TetrisItemRotation& rotation)
+{
+	switch (rotation)
+	{
+	case R0:
+		return 0;
+	case R90:
+		return 1;
+	case R180:
+		return 2;
+	case R270:
+		return 3;
+	}
+	assert(false);
+	return 0;
+}
+
+int TetrisItem::TetrisItemTypeRotation2Int(const TetrisItemType& type, const TetrisItemRotation& rotation)
+{
+	return TetrisItemType2Int(type) * 4 + TetrisItemRotation2Int(rotation);
 }
 
 TetrisItem::TetrisItem(TetrisItemType type, TetrisItemRotation rotation)

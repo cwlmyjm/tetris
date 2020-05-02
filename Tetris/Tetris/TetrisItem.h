@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <unordered_map>
+#include <array>
 
 using namespace std;
 
@@ -15,6 +15,7 @@ enum TetrisItemType
 	Z = 'Z',
 };
 
+
 enum TetrisItemRotation
 {
 	R0 = 0,
@@ -26,9 +27,14 @@ enum TetrisItemRotation
 class TetrisItem
 {
 public:
-	static std::unordered_map<TetrisItemType, std::unordered_map<TetrisItemRotation, TetrisItem>> itemsMap;
-	static TetrisItem& GetTetrisItem(TetrisItemType type, TetrisItemRotation rotation);
+	static std::array<TetrisItem, 28> itemsMap;
+	static TetrisItem& GetTetrisItem(const TetrisItemType& type, const TetrisItemRotation& rotation);
 	static void InitTetrisItemsMap();
+
+private:
+	static int TetrisItemType2Int(const TetrisItemType& type);
+	static int TetrisItemRotation2Int(const TetrisItemRotation& rotation);
+	static int TetrisItemTypeRotation2Int(const TetrisItemType& type, const TetrisItemRotation& rotation);
 
 public:
 	TetrisItem() = default;

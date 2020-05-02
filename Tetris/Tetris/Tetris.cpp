@@ -17,7 +17,7 @@ class SingleData
 {
 public:
 	int columns = 0;
-	std::vector<std::pair<TetrisItem*, int>> data;
+	std::vector<std::tuple<char, int, int>> data;
 };
 
 int tetris(const std::string& input_path, const std::string& output_path)
@@ -77,7 +77,7 @@ int tetris(const std::string& input_path, const std::string& output_path)
 		while (true)
 		{
 			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 5));
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 				std::lock_guard<std::mutex> lock_(lock);
 				if (datas.empty())
 				{
@@ -96,9 +96,10 @@ int tetris(const std::string& input_path, const std::string& output_path)
 
 			auto board = std::make_shared<TetrisBoard>();
 			board->ResetColumns(data.second->columns);
-			for (const auto& p : data.second->data)
+			for (const auto& data : data.second->data)
 			{
-				board->PushItem(p.first, p.second);
+				auto& item = TetrisItem::GetTetrisItem((TetrisItemType)std::get<0>(data), (TetrisItemRotation)std::get<2>(data));
+				board->PushItem(&item, std::get<1>(data));
 			}
 
 			boards[data.first].swap(board);
@@ -125,8 +126,7 @@ int tetris(const std::string& input_path, const std::string& output_path)
 				int column = 0;
 				int rotation = 0;
 				input.read(type, column, rotation);
-				auto& item = TetrisItem::GetTetrisItem((TetrisItemType)type, (TetrisItemRotation)rotation);
-				data->data.emplace_back(&item, column);
+				data->data.emplace_back(type, column, rotation);
 			}
 
 			{
