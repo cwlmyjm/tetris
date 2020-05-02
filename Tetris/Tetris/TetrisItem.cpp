@@ -1,19 +1,31 @@
 #include "TetrisItem.h"
 
-std::map<std::pair<TetrisItemType, TetrisItemRotation>, TetrisItem> TetrisItem::itemsMap;
+std::unordered_map<TetrisItemType, std::unordered_map<TetrisItemRotation, TetrisItem>> TetrisItem::itemsMap;
 
 TetrisItem& TetrisItem::GetTetrisItem(TetrisItemType type, TetrisItemRotation rotation)
 {
-	auto pair = std::make_pair(type, rotation);
-	if (itemsMap.find(pair) != itemsMap.cend())
+	return itemsMap[type][rotation];
+}
+
+void TetrisItem::InitTetrisItemsMap()
+{
+	static bool itemsMapHasInited = false;
+	if (itemsMapHasInited)
 	{
-		return itemsMap[pair];
+		return;
 	}
-	else
+	std::vector<TetrisItemType> types = { I, J, L, O, S, T, Z };
+	std::vector<TetrisItemRotation> rotations = { R0, R90, R180, R270 };
+	for (auto& type : types)
 	{
-		itemsMap.insert(std::make_pair(pair, TetrisItem(type, rotation)));
-		return itemsMap[pair];
+		std::unordered_map<TetrisItemRotation, TetrisItem> itemMap;
+		for (auto& rotation : rotations)
+		{
+			itemMap.emplace(rotation, TetrisItem(type, rotation));
+		}
+		itemsMap.emplace(type, itemMap);
 	}
+	itemsMapHasInited = true;
 }
 
 TetrisItem::TetrisItem(TetrisItemType type, TetrisItemRotation rotation)

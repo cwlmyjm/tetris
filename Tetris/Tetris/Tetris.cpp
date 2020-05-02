@@ -1,4 +1,4 @@
-// Tetris.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+﻿// Tetris.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
 #include <iostream>
@@ -23,6 +23,8 @@ public:
 int tetris(const std::string& input_path, const std::string& output_path)
 {
 	auto begin = clock();
+
+	TetrisItem::InitTetrisItemsMap();
 
 	//StdFstream input(input_path.c_str(), fstream::in);
 	MyFstream input(input_path.c_str(), "r");

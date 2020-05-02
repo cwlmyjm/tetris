@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 using namespace std;
 
@@ -26,8 +26,9 @@ enum TetrisItemRotation
 class TetrisItem
 {
 public:
-	static std::map<std::pair<TetrisItemType, TetrisItemRotation>, TetrisItem> itemsMap;
+	static std::unordered_map<TetrisItemType, std::unordered_map<TetrisItemRotation, TetrisItem>> itemsMap;
 	static TetrisItem& GetTetrisItem(TetrisItemType type, TetrisItemRotation rotation);
+	static void InitTetrisItemsMap();
 
 public:
 	TetrisItem() = default;
