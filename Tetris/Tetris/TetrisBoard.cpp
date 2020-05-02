@@ -7,7 +7,7 @@
 #include "TetrisItem.h"
 
 #define Threshold 1000
-#define RowBelowThreshold BitVector
+#define RowBelowThreshold MyBitVector
 #define RowOverThreshold MixedBitVector
 
 TetrisBoard::TetrisBoard(int columns)

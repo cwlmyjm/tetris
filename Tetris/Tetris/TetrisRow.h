@@ -4,6 +4,7 @@
 class TetrisRow
 {
 public:
+	virtual ~TetrisRow() = default;
 
 	virtual bool GetValue(int index) = 0;
 

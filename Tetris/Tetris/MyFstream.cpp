@@ -1,12 +1,15 @@
 #include "MyFstream.h"
+#include <iostream>
 
 MyFstream::MyFstream(const std::string& path, const std::string& mode)
 {
+	//std::cout << "MyFstream::MyFstream" << std::endl;
 	file = fopen(path.c_str(), mode.c_str());
 }
 
 MyFstream::~MyFstream()
 {
+	//std::cout << "MyFstream::~MyFstream" << std::endl;
 	if (file != NULL)
 	{
 		close();
@@ -23,6 +26,7 @@ void MyFstream::close()
 	if (file != NULL)
 	{
 		fclose(file);
+		file = NULL;
 	}
 }
 

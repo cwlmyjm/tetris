@@ -1,4 +1,4 @@
-﻿// Tetris.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+// Tetris.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
 #include <iostream>
@@ -11,45 +11,22 @@
 #include <queue>
 #include <thread>
 #include "MyFstream.h"
+#include "StdFstream.h"
 
 class SingleData
 {
 public:
-	int columns;
+	int columns = 0;
 	std::vector<std::pair<TetrisItem*, int>> data;
 };
 
-int main()
+int tetris(const std::string& input_path, const std::string& output_path)
 {
 	auto begin = clock();
 
-#define TEST_4
-
-#ifdef TEST_1
-	std::fstream input("./test_input.txt", fstream::in);
-	std::fstream output("./test_output.txt", fstream::out);
-#endif
-
-#ifdef TEST_2
-	std::fstream input("./small_input.txt", fstream::in);
-	std::fstream output("./small_output.txt", fstream::out);
-#endif
-
-#ifdef TEST_3
-	std::fstream input("./medium_input.txt", fstream::in);
-	std::fstream output("./medium_output.txt", fstream::out);
-#endif
-
-#ifdef TEST_4
-	//std::fstream input("./big_input.txt", fstream::in);
-	MyFstream input("./big_input.txt", "r");
-	std::fstream output("./big_output.txt", fstream::out);
-#endif
-
-#ifdef TEST_5
-	std::fstream input("./huge_input.txt", fstream::in);
-	std::fstream output("./huge_output.txt", fstream::out);
-#endif
+	//StdFstream input(input_path.c_str(), fstream::in);
+	MyFstream input(input_path.c_str(), "r");
+	std::fstream output(output_path.c_str(), fstream::out);
 
 	if (!input.is_open())
 	{
@@ -72,12 +49,10 @@ int main()
 		int column = 0;
 		int rotation = 0;
 
-		//input >> columns >> cubeCount;
 		input.read(columns, cubeCount);
 		board->ResetColumns(columns);
 		for (int j = 0; j < cubeCount; j++)
 		{
-			//input >> type >> column >> rotation;
 			input.read(type, column, rotation);
 			auto& item = TetrisItem::GetTetrisItem((TetrisItemType)type, (TetrisItemRotation)rotation);
 			board->PushItem(&item, column);
@@ -141,14 +116,12 @@ int main()
 			// << read from file
 			auto data = std::make_shared<SingleData>();
 			int cubeCount = 0;
-			//input >> data->columns >> cubeCount;
 			input.read(data->columns, cubeCount);
 			for (int j = 0; j < cubeCount; j++)
 			{
 				char type = 'I';
 				int column = 0;
 				int rotation = 0;
-				//input >> type >> column >> rotation;
 				input.read(type, column, rotation);
 				auto& item = TetrisItem::GetTetrisItem((TetrisItemType)type, (TetrisItemRotation)rotation);
 				data->data.emplace_back(&item, column);
@@ -181,12 +154,47 @@ int main()
 
 	input.close();
 	auto end = clock();
-
+	auto cost_time = end - begin;
 	std::cout << "total score is " << total << std::endl;
-	std::cout << "time is " << end - begin << "ms" << std::endl;
-	output << "time is " << end - begin << "ms" << std::endl;
+	std::cout << "time is " << cost_time << "ms" << std::endl;
+	output << "time is " << cost_time << "ms" << std::endl;
 	output.close();
 
+	return cost_time;
+}
+
+int main()
+{
+#define TEST_TIMES 100
+
+#define TEST_4
+#ifdef TEST_1
+#define INPUT "./test_input.txt"
+#define OUTPUT "./test_output.txt"
+#endif
+#ifdef TEST_2
+#define INPUT "./small_input.txt"
+#define OUTPUT "./small_output.txt"
+#endif
+#ifdef TEST_3
+#define INPUT "./medium_input.txt"
+#define OUTPUT "./medium_output.txt"
+#endif
+#ifdef TEST_4
+#define INPUT "./big_input.txt"
+#define OUTPUT "./big_output.txt"
+#endif
+#ifdef TEST_5
+#define INPUT "./huge_input.txt"
+#define OUTPUT "./huge_output.txt"
+#endif
+
+	int total_cost_time = 0;
+	for (int i = 0; i < TEST_TIMES; i++)
+	{
+		total_cost_time += tetris(INPUT, OUTPUT);
+	}
+	std::cout << "average time is " << total_cost_time / TEST_TIMES << "ms" << std::endl;
 	system("pause");
 	return 0;
 
