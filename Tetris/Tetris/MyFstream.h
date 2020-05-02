@@ -17,6 +17,9 @@ public:
 	void read(int& int_var1, int& int_var2);
 	void read(char& char_var1, int& int_var1, int& int_var2);
 
+	template<int n>
+	void readN(char* char_var1, int* int_var1, int* int_var2);
+
 private:
 	FILE* file = NULL;
 };

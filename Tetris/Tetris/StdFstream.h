@@ -17,6 +17,15 @@ public:
 	void read(int& int_var1, int& int_var2);
 	void read(char& char_var1, int& int_var1, int& int_var2);
 
+	template<int n>
+	void readN(char* char_var1, int* int_var1, int* int_var2)
+	{
+		for (int i = 0; i < n; i++)
+		{
+			read(char_var1[i], int_var1[i], int_var2[i]);
+		}
+	}
+
 	StdFstream& operator<<(std::ostream& (__cdecl* fun)(std::ostream&));
 
 	template<typename T>

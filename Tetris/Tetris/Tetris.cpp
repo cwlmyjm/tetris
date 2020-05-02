@@ -128,13 +128,32 @@ int tetris(const std::string& input_path, const std::string& output_path)
 			int cubeCount = 0;
 			input.read(columns, cubeCount);
 			auto data = std::make_shared<SingleData>(i, columns, cubeCount);
-			for (int j = 0; j < cubeCount; j++)
+			for (int j = 0; j < cubeCount;)
 			{
-				char type = 'I';
-				int column = 0;
-				int rotation = 0;
-				input.read(type, column, rotation);
-				data->data[j] = std::move(std::make_tuple(type, column, rotation));
+#define SIZE 4
+#if SIZE > 1
+				if (j + SIZE < cubeCount)
+				{
+					char type[SIZE];
+					int column[SIZE];
+					int rotation[SIZE];
+					input.readN<SIZE>(type, column, rotation);
+					for (int i = 0; i < SIZE; i++)
+					{
+						data->data[j + i] = std::move(std::make_tuple(type[i], column[i], rotation[i]));
+					}
+					j += SIZE;
+				}
+				else
+#endif
+				{
+					char type = 'I';
+					int column = 0;
+					int rotation = 0;
+					input.read(type, column, rotation);
+					data->data[j] = std::move(std::make_tuple(type, column, rotation));
+					j += 1;
+				}
 			}
 
 			{
