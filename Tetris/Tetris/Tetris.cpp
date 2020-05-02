@@ -16,6 +16,12 @@
 class SingleData
 {
 public:
+	SingleData(int _index, int _columns, int _caseCount) 
+		: index(_index)
+		, columns(_columns)
+		, data(_caseCount)
+	{}
+	int index = 0;
 	int columns = 0;
 	std::vector<std::tuple<char, int, int>> data;
 };
@@ -67,13 +73,13 @@ int tetris(const std::string& input_path, const std::string& output_path)
 #else
 
 	std::vector<std::shared_ptr<TetrisBoard>> boards(caseCount, nullptr);
-	std::queue<std::pair<int, std::shared_ptr<SingleData>>> datas;
+	std::queue<std::shared_ptr<SingleData>> datas;
 	bool no_more_data = false;
 	std::mutex lock;
 
 	auto process_fun = [&]()
 	{
-		std::pair<int, std::shared_ptr<SingleData>> data;
+		std::shared_ptr<SingleData> data;
 		while (true)
 		{
 			{
@@ -95,14 +101,14 @@ int tetris(const std::string& input_path, const std::string& output_path)
 			}
 
 			auto board = std::make_shared<TetrisBoard>();
-			board->ResetColumns(data.second->columns);
-			for (const auto& data : data.second->data)
+			board->ResetColumns(data->columns);
+			for (const auto& data : data->data)
 			{
 				auto& item = TetrisItem::GetTetrisItem((TetrisItemType)std::get<0>(data), (TetrisItemRotation)std::get<2>(data));
 				board->PushItem(&item, std::get<1>(data));
 			}
 
-			boards[data.first].swap(board);
+			boards[data->index].swap(board);
 		}
 	};
 
@@ -118,21 +124,22 @@ int tetris(const std::string& input_path, const std::string& output_path)
 		for (int i = 0; i < caseCount; i++)
 		{
 			// << read from file
-			auto data = std::make_shared<SingleData>();
+			int columns = 0;
 			int cubeCount = 0;
-			input.read(data->columns, cubeCount);
+			input.read(columns, cubeCount);
+			auto data = std::make_shared<SingleData>(i, columns, cubeCount);
 			for (int j = 0; j < cubeCount; j++)
 			{
 				char type = 'I';
 				int column = 0;
 				int rotation = 0;
 				input.read(type, column, rotation);
-				data->data.emplace_back(type, column, rotation);
+				data->data[j] = std::move(std::make_tuple(type, column, rotation));
 			}
 
 			{
 				std::lock_guard<std::mutex> lock_(lock);
-				datas.emplace(i, data);
+				datas.emplace(data);
 			}
 		}
 
