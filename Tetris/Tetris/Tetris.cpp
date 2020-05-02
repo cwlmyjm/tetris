@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <time.h>
+#include "MyFstream.h"
 
 int main()
 {
@@ -30,7 +31,8 @@ int main()
 #endif
 
 #ifdef TEST_4
-	std::fstream input("./big_input.txt", fstream::in);
+	//std::fstream input("./big_input.txt", fstream::in);
+	MyFstream input("./big_input.txt", "r");
 	std::fstream output("./big_output.txt", fstream::out);
 #endif
 
