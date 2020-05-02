@@ -4,7 +4,7 @@
 
 using namespace std;
 
-enum TetrisItemType
+enum class TetrisItemType
 {
 	I = 'I',
 	J = 'J',
@@ -16,7 +16,7 @@ enum TetrisItemType
 };
 
 
-enum TetrisItemRotation
+enum class TetrisItemRotation
 {
 	R0 = 0,
 	R90 = 90,

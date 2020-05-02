@@ -15,8 +15,8 @@ void TetrisItem::InitTetrisItemsMap()
 	{
 		return;
 	}
-	std::vector<TetrisItemType> types = { I, J, L, O, S, T, Z };
-	std::vector<TetrisItemRotation> rotations = { R0, R90, R180, R270 };
+	std::vector<TetrisItemType> types = { TetrisItemType::I, TetrisItemType::J, TetrisItemType::L, TetrisItemType::O, TetrisItemType::S, TetrisItemType::T, TetrisItemType::Z };
+	std::vector<TetrisItemRotation> rotations = { TetrisItemRotation::R0, TetrisItemRotation::R90, TetrisItemRotation::R180, TetrisItemRotation::R270 };
 	for (auto& type : types)
 	{
 		for (auto& rotation : rotations)
@@ -31,19 +31,19 @@ int TetrisItem::TetrisItemType2Int(const TetrisItemType& type)
 {
 	switch (type)
 	{
-	case I:
+	case TetrisItemType::I:
 		return 0;
-	case J:
+	case TetrisItemType::J:
 		return 1;
-	case L:
+	case TetrisItemType::L:
 		return 2;
-	case O:
+	case TetrisItemType::O:
 		return 3;
-	case S:
+	case TetrisItemType::S:
 		return 4;
-	case T:
+	case TetrisItemType::T:
 		return 5;
-	case Z:
+	case TetrisItemType::Z:
 		return 7;
 	}
 	assert(false);
@@ -54,13 +54,13 @@ int TetrisItem::TetrisItemRotation2Int(const TetrisItemRotation& rotation)
 {
 	switch (rotation)
 	{
-	case R0:
+	case TetrisItemRotation::R0:
 		return 0;
-	case R90:
+	case TetrisItemRotation::R90:
 		return 1;
-	case R180:
+	case TetrisItemRotation::R180:
 		return 2;
-	case R270:
+	case TetrisItemRotation::R270:
 		return 3;
 	}
 	assert(false);
@@ -98,17 +98,17 @@ bool TetrisItem::GetValue(int row, int column)
 	int _column = column;
 	switch (m_rotation)
 	{
-	case R0:
+	case TetrisItemRotation::R0:
 		break;
-	case R90:
+	case TetrisItemRotation::R90:
 		_row = m_rows - 1 - column;
 		_column = row;
 		break;
-	case R180:
+	case TetrisItemRotation::R180:
 		_row = m_rows - 1 - row;
 		_column = m_columns - 1 - column;
 		break;
-	case R270:
+	case TetrisItemRotation::R270:
 		_row = column;
 		_column = m_columns - 1 - row;
 		break;
@@ -121,7 +121,7 @@ bool TetrisItem::GetValue(int row, int column)
 
 pair<int, int> TetrisItem::GetRect()
 {
-	if (m_rotation == R0 || m_rotation == R180)
+	if (m_rotation == TetrisItemRotation::R0 || m_rotation == TetrisItemRotation::R180)
 	{
 		return std::make_pair(m_rows, m_columns);
 	}
@@ -134,42 +134,42 @@ pair<int, int> TetrisItem::GetRect()
 void TetrisItem::Init()
 {
 	switch (m_type) {
-	case I:
+	case TetrisItemType::I:
 		m_cube.push_back({ true, true, true, true });
 		m_rows = 1;
 		m_columns = 4;
 		break;
-	case J:
+	case TetrisItemType::J:
 		m_cube.push_back({ true, false, false });
 		m_cube.push_back({ true, true, true });
 		m_rows = 2;
 		m_columns = 3;
 		break;
-	case L:
+	case TetrisItemType::L:
 		m_cube.push_back({ false, false, true });
 		m_cube.push_back({ true, true, true });
 		m_rows = 2;
 		m_columns = 3;
 		break;
-	case O:
+	case TetrisItemType::O:
 		m_cube.push_back({ true, true });
 		m_cube.push_back({ true, true });
 		m_rows = 2;
 		m_columns = 2;
 		break;
-	case S:
+	case TetrisItemType::S:
 		m_cube.push_back({ false, true, true });
 		m_cube.push_back({ true, true, false });
 		m_rows = 2;
 		m_columns = 3;
 		break;
-	case T:
+	case TetrisItemType::T:
 		m_cube.push_back({ false, true, false });
 		m_cube.push_back({ true, true, true });
 		m_rows = 2;
 		m_columns = 3;
 		break;
-	case Z:
+	case TetrisItemType::Z:
 		m_cube.push_back({ true, true, false });
 		m_cube.push_back({ false, true, true });
 		m_rows = 2;

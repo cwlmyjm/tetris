@@ -111,6 +111,7 @@ int tetris(const std::string& input_path, const std::string& output_path)
 	for (int i = 0; i < process_threads_count; i++)
 	{
 		process_threads.emplace_back(process_fun);
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 
 	{
