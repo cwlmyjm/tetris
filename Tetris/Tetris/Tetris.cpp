@@ -1,4 +1,4 @@
-// Tetris.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+﻿// Tetris.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
 #include <iostream>
@@ -7,7 +7,17 @@
 #include <fstream>
 #include <iostream>
 #include <time.h>
+#include <mutex>
+#include <queue>
+#include <thread>
 #include "MyFstream.h"
+
+class SingleData
+{
+public:
+	int columns;
+	std::vector<std::pair<TetrisItem*, int>> data;
+};
 
 int main()
 {
@@ -50,6 +60,8 @@ int main()
 	int caseCount = 0;
 	input >> caseCount;
 	int total = 0;
+
+#if 0
 	auto board = std::make_unique<TetrisBoard>();
 	for (int i = 0; i < caseCount; i++)
 	{
@@ -60,11 +72,13 @@ int main()
 		int column = 0;
 		int rotation = 0;
 
-		input >> columns >> cubeCount;
+		//input >> columns >> cubeCount;
+		input.read(columns, cubeCount);
 		board->ResetColumns(columns);
 		for (int j = 0; j < cubeCount; j++)
 		{
-			input >> type >> column >> rotation;
+			//input >> type >> column >> rotation;
+			input.read(type, column, rotation);
 			auto& item = TetrisItem::GetTetrisItem((TetrisItemType)type, (TetrisItemRotation)rotation);
 			board->PushItem(&item, column);
 		}
@@ -72,6 +86,98 @@ int main()
 		//board->PrintCaseToFile(i, output);
 		total += board->GetScore();
 	}
+
+#else
+
+	std::vector<std::shared_ptr<TetrisBoard>> boards(caseCount, nullptr);
+	std::queue<std::pair<int, std::shared_ptr<SingleData>>> datas;
+	bool no_more_data = false;
+	std::mutex lock;
+
+	auto process_fun = [&]()
+	{
+		std::pair<int, std::shared_ptr<SingleData>> data;
+		while (true)
+		{
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 5));
+				std::lock_guard<std::mutex> lock_(lock);
+				if (datas.empty())
+				{
+					if (no_more_data)
+					{
+						break;
+					}
+					continue;
+				}
+				else
+				{
+					data.swap(datas.front());
+					datas.pop();
+				}
+			}
+
+			auto board = std::make_shared<TetrisBoard>();
+			board->ResetColumns(data.second->columns);
+			for (const auto& p : data.second->data)
+			{
+				board->PushItem(p.first, p.second);
+			}
+
+			boards[data.first].swap(board);
+		}
+	};
+
+	const int process_threads_count = 4;
+	std::vector<std::thread> process_threads;
+	for (int i = 0; i < process_threads_count; i++)
+	{
+		process_threads.emplace_back(process_fun);
+	}
+
+	{
+		for (int i = 0; i < caseCount; i++)
+		{
+			// << read from file
+			auto data = std::make_shared<SingleData>();
+			int cubeCount = 0;
+			//input >> data->columns >> cubeCount;
+			input.read(data->columns, cubeCount);
+			for (int j = 0; j < cubeCount; j++)
+			{
+				char type = 'I';
+				int column = 0;
+				int rotation = 0;
+				//input >> type >> column >> rotation;
+				input.read(type, column, rotation);
+				auto& item = TetrisItem::GetTetrisItem((TetrisItemType)type, (TetrisItemRotation)rotation);
+				data->data.emplace_back(&item, column);
+			}
+
+			{
+				std::lock_guard<std::mutex> lock_(lock);
+				datas.emplace(i, data);
+			}
+		}
+
+		{
+			std::lock_guard<std::mutex> lock_(lock);
+			no_more_data = true;
+		}
+	};
+
+	for (int i = 0; i < process_threads_count; i++)
+	{
+		process_threads[i].join();
+	}
+
+	for (auto& board : boards)
+	{
+		//board->PrintCaseOnScreen(i);
+		//board->PrintCaseToFile(i, output);
+		total += board->GetScore();
+	}
+#endif
 
 	input.close();
 	auto end = clock();
