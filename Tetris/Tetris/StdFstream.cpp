@@ -45,3 +45,9 @@ void StdFstream::read(char& char_var1, int& int_var1, int& int_var2)
 {
 	file >> char_var1 >> int_var1 >> int_var2;
 }
+
+StdFstream& StdFstream::operator<<(std::ostream& (__cdecl* fun)(std::ostream&))
+{
+	fun(file);
+	return *this;
+};
