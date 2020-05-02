@@ -1,4 +1,4 @@
-﻿// Tetris.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+// Tetris.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
 #include <iostream>
@@ -54,17 +54,15 @@ int main()
 		// << read from file
 		int columns = 0;
 		int cubeCount = 0;
-		input >> columns;
-		input >> cubeCount;
+		char type = 'I';
+		int column = 0;
+		int rotation = 0;
+
+		input >> columns >> cubeCount;
 		board->ResetColumns(columns);
 		for (int j = 0; j < cubeCount; j++)
 		{
-			char type = 'I';
-			int column = 0;
-			int rotation = 0;
-			input >> type;
-			input >> column;
-			input >> rotation;
+			input >> type >> column >> rotation;
 			auto& item = TetrisItem::GetTetrisItem((TetrisItemType)type, (TetrisItemRotation)rotation);
 			board->PushItem(&item, column);
 		}
