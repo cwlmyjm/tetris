@@ -2,6 +2,7 @@
 //
 
 #include <iostream>
+#include "TetrisInterface.h"
 #include "SyncSolution.h"
 #include "AsyncSolution.h"
 #include "AsyncSolutionEx.h"
@@ -33,9 +34,10 @@ int main()
 #endif
 
 	int total_cost_time = 0;
-	//auto solution = std::make_unique<SyncSolution>();
-	//auto solution = std::make_unique<AsyncSolution>();
-	auto solution = std::make_unique<AsyncSolutionEx>();
+	std::unique_ptr<TetrisInterface> solution = nullptr;
+	//solution = std::make_unique<SyncSolution>();
+	solution = std::make_unique<AsyncSolution>();
+	//solution = std::make_unique<AsyncSolutionEx>();
 	for (int i = 0; i < TEST_TIMES; i++)
 	{
 		total_cost_time += solution->tetris(i, INPUT, OUTPUT);
