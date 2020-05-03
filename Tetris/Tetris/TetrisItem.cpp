@@ -44,7 +44,7 @@ int TetrisItem::TetrisItemType2Int(const TetrisItemType& type)
 	case TetrisItemType::T:
 		return 5;
 	case TetrisItemType::Z:
-		return 7;
+		return 6;
 	}
 	assert(false);
 	return 0;
