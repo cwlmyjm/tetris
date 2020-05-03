@@ -1,4 +1,4 @@
-#include "SyncSolution.h"
+ï»¿#include "SyncSolution.h"
 #include <iostream>
 #include "TetrisBoard.h"
 #include "TetrisItem.h"
@@ -53,7 +53,7 @@ int SyncSolution::tetris(int index, const std::string& input_path, const std::st
 
 	auto end = clock();
 
-	// Êä³öÊ±¼äÏûºÄµÈĞÅÏ¢
+	// è¾“å‡ºæ—¶é—´æ¶ˆè€—ç­‰ä¿¡æ¯
 	auto cost_time = end - begin;
 	std::cout << "cost time is " << cost_time << "ms" << std::endl;
 	output << "cost time is " << cost_time << "ms" << std::endl;

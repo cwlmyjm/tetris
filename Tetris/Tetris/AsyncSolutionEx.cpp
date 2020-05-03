@@ -1,4 +1,4 @@
-﻿#include "AsyncSolution.h"
+﻿#include "AsyncSolutionEx.h"
 #include "TetrisBoard.h"
 #include "TetrisItem.h"
 #include <fstream>
@@ -7,14 +7,14 @@
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <atomic>
 #include "MyFstream.h"
 #include "StdFstream.h"
 #include "SuperFstream.h"
 
-//#define MULTI_SEND
 #define PROCESS_THREADS_COUNT 8
 
-int AsyncSolution::tetris(int index, const std::string& input_path, const std::string& output_path)
+int AsyncSolutionEx::tetris(int index, const std::string& input_path, const std::string& output_path)
 {
 	auto begin = clock();
 
@@ -36,65 +36,36 @@ int AsyncSolution::tetris(int index, const std::string& input_path, const std::s
 	int total = 0;
 
 	std::vector<TetrisBoard*> boards(caseCount, nullptr);
-	std::queue<SingleData*> datas;
-	bool no_more_data = false;
+	std::condition_variable cv;
 	std::mutex lock;
+	std::atomic<int> alive_process_threads_count = 0;
 
-	auto process_fun = [&]()
+	auto process_fun = [&](SingleDataEx* data)
 	{
-		SingleData* data = nullptr;
-		while (true)
+		auto board = new TetrisBoard();
+		board->ResetColumns(data->columns);
+		for (const auto& data : data->data)
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
-				std::lock_guard<std::mutex> lock_(lock);
-				if (datas.empty())
-				{
-					if (no_more_data)
-					{
-						break;
-					}
-					continue;
-				}
-				else
-				{
-					data = datas.front();
-					datas.pop();
-				}
-			}
-
-			auto board = new TetrisBoard();
-			board->ResetColumns(data->columns);
-			for (const auto& data : data->data)
-			{
-				auto& item = TetrisItem::GetTetrisItem((TetrisItemType)std::get<0>(data), (TetrisItemRotation)std::get<2>(data));
-				board->PushItem(&item, std::get<1>(data));
-			}
-
-			boards[data->index] = board;
-			delete data;
+			auto& item = TetrisItem::GetTetrisItem((TetrisItemType)std::get<0>(data), (TetrisItemRotation)std::get<2>(data));
+			board->PushItem(&item, std::get<1>(data));
 		}
+
+		boards[data->index] = board;
+		delete data;
+
+		// 子线程任务结束，计数器减一，并发送notify唤醒主线程。
+		alive_process_threads_count--;
+		cv.notify_one();
 	};
 
-	std::vector<std::thread> process_threads;
-	for (int i = 0; i < PROCESS_THREADS_COUNT; i++)
 	{
-		process_threads.emplace_back(process_fun);
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-	}
-
-	{
-#ifdef MULTI_SEND
-		std::queue<SingleData*> temps;
-#endif
 		for (int i = 0; i < caseCount; i++)
 		{
 			// << read from file
 			int columns = 0;
 			int cubeCount = 0;
 			input.read(columns, cubeCount);
-			auto data = new SingleData(i, columns, cubeCount);
+			auto data = new SingleDataEx(i, columns, cubeCount);
 			for (int j = 0; j < cubeCount;)
 			{
 #define SIZE 4
@@ -123,45 +94,27 @@ int AsyncSolution::tetris(int index, const std::string& input_path, const std::s
 				}
 			}
 
-#ifdef MULTI_SEND
-			temps.emplace(data);
-
-#define TEMPS_MAX_SIZE 0b111
-			if ((i & TEMPS_MAX_SIZE) == TEMPS_MAX_SIZE)
 			{
-				std::lock_guard<std::mutex> lock_(lock);
-				while (temps.size())
-				{
-					datas.emplace(std::move(temps.front()));
-					temps.pop();
-				}
+				// 如果子线程数量小于PROCESS_THREADS_COUNT，那么马上创建子线程。
+				// 否则开始等待，直到有子线程结束时发送notify来唤醒。
+				std::unique_lock<std::mutex> lock_(lock);
+				cv.wait(lock_, [&]() {
+					return alive_process_threads_count < PROCESS_THREADS_COUNT;
+				});
+				alive_process_threads_count++;
+				std::thread process_task(process_fun, data);
+				process_task.detach();
 			}
-#else
-			{
-				std::lock_guard<std::mutex> lock_(lock);
-				datas.emplace(data);
-			}
-#endif
-		}
-
-		{
-			std::lock_guard<std::mutex> lock_(lock);
-#ifdef MULTI_SEND
-			while (temps.size())
-			{
-				datas.emplace(std::move(temps.front()));
-				temps.pop();
-			}
-#endif
-			no_more_data = true;
 		}
 	};
 
 	auto read_end = clock();
 
-	for (int i = 0; i < PROCESS_THREADS_COUNT; i++)
+	// 等待所以子线程结束任务
+	std::unique_lock<std::mutex> lock_(lock);
+	while (alive_process_threads_count)
 	{
-		process_threads[i].join();
+		cv.wait(lock_);
 	}
 
 	for (auto& board : boards)

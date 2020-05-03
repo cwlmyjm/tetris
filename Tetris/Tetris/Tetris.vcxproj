@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AsyncSolution.cpp" />
+    <ClCompile Include="AsyncSolutionEx.cpp" />
     <ClCompile Include="BitSet.cpp" />
     <ClCompile Include="BitVector.cpp" />
     <ClCompile Include="MixedBitVector.cpp" />
@@ -163,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AsyncSolution.h" />
+    <ClInclude Include="AsyncSolutionEx.h" />
     <ClInclude Include="BitSet.h" />
     <ClInclude Include="BitVector.h" />
     <ClInclude Include="MixedBitVector.h" />

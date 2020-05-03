@@ -54,6 +54,9 @@
     <ClCompile Include="SuperFstream.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="AsyncSolutionEx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TetrisBoard.h">
@@ -96,6 +99,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="SuperFstream.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncSolutionEx.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

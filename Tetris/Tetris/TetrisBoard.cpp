@@ -1,4 +1,4 @@
-#include "TetrisBoard.h"
+ï»¿#include "TetrisBoard.h"
 #include "TetrisRow.h"
 #include "BitSet.h"
 #include "BitVector.h"
@@ -135,7 +135,7 @@ bool TetrisBoard::CanPutItem(TetrisItem* item, int row, int colum)
 		for (int j = 0; j < rect.second; j++)
 		{
 			bool itemElement = item->GetValue(i, j);
-			// ÏòÏÂ³¬³öÁË
+			// å‘ä¸‹è¶…å‡ºäº†
 			if (row - i < 0)
 			{
 				return false;
@@ -146,7 +146,7 @@ bool TetrisBoard::CanPutItem(TetrisItem* item, int row, int colum)
 				continue;
 			}
 
-			auto boardElementStatus = m_board[row - i]->GetValue(colum + j);// ÕâÀï¶ÔÓ¦Ò»ÏÂ¡£
+			auto boardElementStatus = m_board[row - i]->GetValue(colum + j);// è¿™é‡Œå¯¹åº”ä¸€ä¸‹ã€‚
 			if (itemElement && boardElementStatus)
 			{
 				return false;
@@ -168,7 +168,7 @@ void TetrisBoard::PutItem(TetrisItem* item, int row, int colum)
 			{
 				continue;
 			}
-			m_board[row - i]->SetValue(colum + j, m_board[row - i]->GetValue(colum + j) || itemElement);// ÕâÀï¶ÔÓ¦Ò»ÏÂ¡£
+			m_board[row - i]->SetValue(colum + j, m_board[row - i]->GetValue(colum + j) || itemElement);// è¿™é‡Œå¯¹åº”ä¸€ä¸‹ã€‚
 		}
 	}
 
