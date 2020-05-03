@@ -5,6 +5,7 @@
 #include <time.h>
 #include "MyFstream.h"
 #include "StdFstream.h"
+#include "SuperFstream.h"
 
 int SyncSolution::tetris(int index, const std::string& input_path, const std::string& output_path)
 {
@@ -13,7 +14,8 @@ int SyncSolution::tetris(int index, const std::string& input_path, const std::st
 	TetrisItem::InitTetrisItemsMap();
 
 	//StdFstream input(input_path.c_str(), fstream::in);
-	MyFstream input(input_path.c_str(), "r");
+	//MyFstream input(input_path.c_str(), "r");
+	SuperFstream input(input_path.c_str(), "r");
 	StdFstream output(output_path.c_str(), fstream::out);
 
 	if (!input.is_open())

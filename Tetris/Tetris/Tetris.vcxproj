@@ -155,6 +155,7 @@
     <ClCompile Include="MyFstream.cpp" />
     <ClCompile Include="MyMutex.cpp" />
     <ClCompile Include="StdFstream.cpp" />
+    <ClCompile Include="SuperFstream.cpp" />
     <ClCompile Include="SyncSolution.cpp" />
     <ClCompile Include="Tetris.cpp" />
     <ClCompile Include="TetrisBoard.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="MyFstream.h" />
     <ClInclude Include="MyMutex.h" />
     <ClInclude Include="StdFstream.h" />
+    <ClInclude Include="SuperFstream.h" />
     <ClInclude Include="SyncSolution.h" />
     <ClInclude Include="TetrisBoard.h" />
     <ClInclude Include="TetrisInterface.h" />
