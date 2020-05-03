@@ -11,6 +11,9 @@
 #include "StdFstream.h"
 #include "SuperFstream.h"
 
+//#define MULTI_SEND
+#define PROCESS_THREADS_COUNT 8
+
 int AsyncSolution::tetris(int index, const std::string& input_path, const std::string& output_path)
 {
 	auto begin = clock();
@@ -74,16 +77,17 @@ int AsyncSolution::tetris(int index, const std::string& input_path, const std::s
 		}
 	};
 
-	const int process_threads_count = 4;
 	std::vector<std::thread> process_threads;
-	for (int i = 0; i < process_threads_count; i++)
+	for (int i = 0; i < PROCESS_THREADS_COUNT; i++)
 	{
 		process_threads.emplace_back(process_fun);
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 
 	{
+#ifdef MULTI_SEND
 		std::queue<SingleData*> temps;
+#endif
 		for (int i = 0; i < caseCount; i++)
 		{
 			// << read from file
@@ -119,6 +123,7 @@ int AsyncSolution::tetris(int index, const std::string& input_path, const std::s
 				}
 			}
 
+#ifdef MULTI_SEND
 			temps.emplace(data);
 
 #define TEMPS_MAX_SIZE 0b111
@@ -131,22 +136,30 @@ int AsyncSolution::tetris(int index, const std::string& input_path, const std::s
 					temps.pop();
 				}
 			}
+#else
+			{
+				std::lock_guard<std::mutex> lock_(lock);
+				datas.emplace(data);
+			}
+#endif
 		}
 
 		{
 			std::lock_guard<std::mutex> lock_(lock);
+#ifdef MULTI_SEND
 			while (temps.size())
 			{
 				datas.emplace(std::move(temps.front()));
 				temps.pop();
 			}
+#endif
 			no_more_data = true;
 		}
 	};
 
 	auto read_end = clock();
 
-	for (int i = 0; i < process_threads_count; i++)
+	for (int i = 0; i < PROCESS_THREADS_COUNT; i++)
 	{
 		process_threads[i].join();
 	}
