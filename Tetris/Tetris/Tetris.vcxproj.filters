@@ -45,6 +45,12 @@
     <ClCompile Include="MyMutex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SyncSolution.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncSolution.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TetrisBoard.h">
@@ -75,6 +81,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MyMutex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TetrisInterface.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SyncSolution.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncSolution.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
