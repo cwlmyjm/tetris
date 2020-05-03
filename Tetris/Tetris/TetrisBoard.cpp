@@ -13,16 +13,20 @@
 TetrisBoard::TetrisBoard(int columns)
 	: m_columns(columns)
 {
-	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
-	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
-	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
-	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
+	m_board.push_back(std::move(new (RowBelowThreshold)(m_columns)));
+	m_board.push_back(std::move(new (RowBelowThreshold)(m_columns)));
+	m_board.push_back(std::move(new (RowBelowThreshold)(m_columns)));
+	m_board.push_back(std::move(new (RowBelowThreshold)(m_columns)));
 	m_rowCount = 4;
 }
 
 
 TetrisBoard::~TetrisBoard()
 {
+	for (auto& it : m_board)
+	{
+		delete it;
+	}
 }
 
 void TetrisBoard::PushItem(TetrisItem* item, int column)
@@ -97,10 +101,10 @@ void TetrisBoard::ResetColumns(int columns)
 	m_board.clear();
 	m_score = 0;
 
-	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
-	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
-	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
-	m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
+	m_board.push_back(std::move(new (RowBelowThreshold)(m_columns)));
+	m_board.push_back(std::move(new (RowBelowThreshold)(m_columns)));
+	m_board.push_back(std::move(new (RowBelowThreshold)(m_columns)));
+	m_board.push_back(std::move(new (RowBelowThreshold)(m_columns)));
 	m_rowCount = 4;
 }
 
@@ -108,17 +112,17 @@ void TetrisBoard::AddFourRows()
 {
 	if (m_rowCount < Threshold)
 	{
-		m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
-		m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
-		m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
-		m_board.push_back(std::move(std::make_unique<RowBelowThreshold>(m_columns)));
+		m_board.push_back(std::move(new (RowBelowThreshold)(m_columns)));
+		m_board.push_back(std::move(new (RowBelowThreshold)(m_columns)));
+		m_board.push_back(std::move(new (RowBelowThreshold)(m_columns)));
+		m_board.push_back(std::move(new (RowBelowThreshold)(m_columns)));
 	}
 	else
 	{
-		m_board.push_back(std::move(std::make_unique<RowOverThreshold>(m_columns)));
-		m_board.push_back(std::move(std::make_unique<RowOverThreshold>(m_columns)));
-		m_board.push_back(std::move(std::make_unique<RowOverThreshold>(m_columns)));
-		m_board.push_back(std::move(std::make_unique<RowOverThreshold>(m_columns)));
+		m_board.push_back(std::move(new (RowOverThreshold)(m_columns)));
+		m_board.push_back(std::move(new (RowOverThreshold)(m_columns)));
+		m_board.push_back(std::move(new (RowOverThreshold)(m_columns)));
+		m_board.push_back(std::move(new (RowOverThreshold)(m_columns)));
 	}
 	m_rowCount += 4;
 }
@@ -182,7 +186,9 @@ void TetrisBoard::CheckLineClear(int row, int lens)
 		//if (std::all_of(rowData.cbegin(), rowData.cend(), [](bool input) {return input; }))
 		if (rowData->AllTrue())
 		{
-			m_board.erase(m_board.cbegin() + _row);
+			auto it = (m_board.cbegin() + _row);
+			delete* it;
+			m_board.erase(it);
 			clearLines++;
 		}
 	}

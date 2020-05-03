@@ -1,4 +1,4 @@
-﻿// Tetris.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+// Tetris.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
 #include <iostream>
@@ -83,6 +83,7 @@ int tetris(int index, const std::string& input_path, const std::string& output_p
 		SingleData* data = nullptr;
 		while (true)
 		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			{
 				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 				std::lock_guard<std::mutex> lock_(lock);

@@ -30,7 +30,7 @@ private:
 	void PrintBoard();
 
 private:
-	std::vector<std::unique_ptr<TetrisRow>> m_board;
+	std::vector<TetrisRow*> m_board;
 	int m_rowCount = 0;
 	int m_columns = 0;
 	int m_score = 0;
