@@ -27,7 +27,7 @@ public:
 	std::vector<std::tuple<char, int, int>> data;
 };
 
-int tetris(const std::string& input_path, const std::string& output_path)
+int tetris(int index, const std::string& input_path, const std::string& output_path)
 {
 	auto begin = clock();
 
@@ -73,14 +73,14 @@ int tetris(const std::string& input_path, const std::string& output_path)
 
 #else
 
-	std::vector<std::shared_ptr<TetrisBoard>> boards(caseCount, nullptr);
-	std::queue<std::shared_ptr<SingleData>> datas;
+	std::vector<TetrisBoard*> boards(caseCount, nullptr);
+	std::queue<SingleData*> datas;
 	bool no_more_data = false;
 	std::mutex lock;
 
 	auto process_fun = [&]()
 	{
-		std::shared_ptr<SingleData> data;
+		SingleData* data = nullptr;
 		while (true)
 		{
 			{
@@ -96,12 +96,12 @@ int tetris(const std::string& input_path, const std::string& output_path)
 				}
 				else
 				{
-					data.swap(datas.front());
+					data = datas.front();
 					datas.pop();
 				}
 			}
 
-			auto board = std::make_shared<TetrisBoard>();
+			auto board = new TetrisBoard();
 			board->ResetColumns(data->columns);
 			for (const auto& data : data->data)
 			{
@@ -109,7 +109,8 @@ int tetris(const std::string& input_path, const std::string& output_path)
 				board->PushItem(&item, std::get<1>(data));
 			}
 
-			boards[data->index].swap(board);
+			boards[data->index] = board;
+			delete data;
 		}
 	};
 
@@ -122,13 +123,14 @@ int tetris(const std::string& input_path, const std::string& output_path)
 	}
 
 	{
+		std::queue<SingleData*> temps;
 		for (int i = 0; i < caseCount; i++)
 		{
 			// << read from file
 			int columns = 0;
 			int cubeCount = 0;
 			input.read(columns, cubeCount);
-			auto data = std::make_shared<SingleData>(i, columns, cubeCount);
+			auto data = new SingleData(i, columns, cubeCount);
 			for (int j = 0; j < cubeCount;)
 			{
 #define SIZE 4
@@ -157,14 +159,27 @@ int tetris(const std::string& input_path, const std::string& output_path)
 				}
 			}
 
+			temps.emplace(data);
+
+#define TEMPS_MAX_SIZE 0b111
+			if ((i & TEMPS_MAX_SIZE) == TEMPS_MAX_SIZE)
 			{
 				std::lock_guard<std::mutex> lock_(lock);
-				datas.emplace(data);
+				while (temps.size())
+				{
+					datas.emplace(std::move(temps.front()));
+					temps.pop();
+				}
 			}
 		}
 
 		{
 			std::lock_guard<std::mutex> lock_(lock);
+			while (temps.size())
+			{
+				datas.emplace(std::move(temps.front()));
+				temps.pop();
+			}
 			no_more_data = true;
 		}
 	};
@@ -181,13 +196,14 @@ int tetris(const std::string& input_path, const std::string& output_path)
 		//board->PrintCaseOnScreen(i);
 		//board->PrintCaseToFile(i, output);
 		total += board->GetScore();
+		delete board;
 	}
 #endif
 
 	auto end = clock();
 	
 	// 输出时间消耗等信息
-	std::cout << "=========================" << std::endl;
+	std::cout << "=========================" << index << std::endl;
 	auto read_cost_time = read_end - begin;
 	std::cout << "read time is " << read_cost_time << "ms" << std::endl;
 	output << "read time is " << read_cost_time << "ms" << std::endl;
@@ -237,7 +253,7 @@ int main()
 	int total_cost_time = 0;
 	for (int i = 0; i < TEST_TIMES; i++)
 	{
-		total_cost_time += tetris(INPUT, OUTPUT);
+		total_cost_time += tetris(i, INPUT, OUTPUT);
 	}
 	std::cout << "=========================" << std::endl;
 	std::cout << "average time is " << total_cost_time / TEST_TIMES << "ms" << std::endl;
