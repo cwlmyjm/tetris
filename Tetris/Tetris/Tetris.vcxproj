@@ -152,6 +152,7 @@
     <ClCompile Include="MixedBitVector.cpp" />
     <ClCompile Include="MyBitVector.cpp" />
     <ClCompile Include="MyFstream.cpp" />
+    <ClCompile Include="MyMutex.cpp" />
     <ClCompile Include="StdFstream.cpp" />
     <ClCompile Include="Tetris.cpp" />
     <ClCompile Include="TetrisBoard.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="MixedBitVector.h" />
     <ClInclude Include="MyBitVector.h" />
     <ClInclude Include="MyFstream.h" />
+    <ClInclude Include="MyMutex.h" />
     <ClInclude Include="StdFstream.h" />
     <ClInclude Include="TetrisBoard.h" />
     <ClInclude Include="TetrisItem.h" />

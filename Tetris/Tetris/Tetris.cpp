@@ -12,6 +12,7 @@
 #include <thread>
 #include "MyFstream.h"
 #include "StdFstream.h"
+#include "MyMutex.h"
 
 class SingleData
 {
@@ -168,6 +169,8 @@ int tetris(const std::string& input_path, const std::string& output_path)
 		}
 	};
 
+	auto read_end = clock();
+
 	for (int i = 0; i < process_threads_count; i++)
 	{
 		process_threads[i].join();
@@ -181,12 +184,25 @@ int tetris(const std::string& input_path, const std::string& output_path)
 	}
 #endif
 
-	input.close();
 	auto end = clock();
+	
+	// 输出时间消耗等信息
+	std::cout << "=========================" << std::endl;
+	auto read_cost_time = read_end - begin;
+	std::cout << "read time is " << read_cost_time << "ms" << std::endl;
+	output << "read time is " << read_cost_time << "ms" << std::endl;
+
 	auto cost_time = end - begin;
+	std::cout << "cost time is " << cost_time << "ms" << std::endl;
+	output << "cost time is " << cost_time << "ms" << std::endl;
+	
+	auto calc_cost_time = end - read_end;
+	std::cout << "calc time is " << calc_cost_time << "ms" << std::endl;
+	output << "calc time is " << calc_cost_time << "ms" << std::endl;
+
 	std::cout << "total score is " << total << std::endl;
-	std::cout << "time is " << cost_time << "ms" << std::endl;
-	output << "time is " << cost_time << "ms" << std::endl;
+
+	input.close();
 	output.close();
 
 	return cost_time;
@@ -223,6 +239,7 @@ int main()
 	{
 		total_cost_time += tetris(INPUT, OUTPUT);
 	}
+	std::cout << "=========================" << std::endl;
 	std::cout << "average time is " << total_cost_time / TEST_TIMES << "ms" << std::endl;
 	system("pause");
 	return 0;
