@@ -7,6 +7,7 @@
 #include "AsyncSolution.h"
 #include "AsyncSolutionEx.h"
 #include "TetrisRow.h"
+#include <Windows.h>
 
 int main()
 {
@@ -35,16 +36,24 @@ int main()
 #endif
 
 	int total_cost_time = 0;
+	int max_cost_time = 0;
+	int min_cost_time = INT_MAX;
+	int cost_time = 0;
 	std::unique_ptr<TetrisInterface> solution = nullptr;
 	//solution = std::make_unique<SyncSolution>();
 	//solution = std::make_unique<AsyncSolution>();
 	solution = std::make_unique<AsyncSolutionEx>();
 	for (int i = 0; i < TEST_TIMES; i++)
 	{
-		total_cost_time += solution->tetris(i, INPUT, OUTPUT);
+		cost_time = solution->tetris(i, INPUT, OUTPUT);
+		max_cost_time = max(max_cost_time, cost_time);
+		min_cost_time = min(min_cost_time, cost_time);
+		total_cost_time += cost_time;
 	}
 	std::cout << "=========================" << std::endl;
 	std::cout << "average time is " << total_cost_time / TEST_TIMES << "ms" << std::endl;
+	std::cout << "maximum time is " << max_cost_time << "ms" << std::endl;
+	std::cout << "minimum time is " << min_cost_time << "ms" << std::endl;
 	TetrisRow::gc_clear();
 	system("pause");
 	return 0;
