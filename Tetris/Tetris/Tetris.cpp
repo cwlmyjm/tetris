@@ -6,6 +6,7 @@
 #include "SyncSolution.h"
 #include "AsyncSolution.h"
 #include "AsyncSolutionEx.h"
+#include "TetrisRow.h"
 
 int main()
 {
@@ -44,6 +45,7 @@ int main()
 	}
 	std::cout << "=========================" << std::endl;
 	std::cout << "average time is " << total_cost_time / TEST_TIMES << "ms" << std::endl;
+	TetrisRow::gc_clear();
 	system("pause");
 	return 0;
 

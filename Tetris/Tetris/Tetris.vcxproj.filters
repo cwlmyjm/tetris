@@ -60,6 +60,12 @@
     <ClCompile Include="TaskThread.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MyMemory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TetrisRow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TetrisBoard.h">
@@ -108,6 +114,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="TaskThread.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MyMemory.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
