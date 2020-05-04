@@ -26,6 +26,7 @@ private:
 	bool no_more_task_ = false;
 	std::queue<StdClosure> tasks_queue_;
 	std::mutex lock_;
+	std::condition_variable cv;
 	std::thread current_;
 };
 

@@ -25,8 +25,9 @@ void TaskThread::Wait()
 
 void TaskThread::PostTask(const StdClosure& task)
 {
-	std::lock_guard<std::mutex> lock(lock_);
+	std::unique_lock<std::mutex> lock(lock_);
 	tasks_queue_.emplace(task);
+	cv.notify_one();
 }
 
 void TaskThread::NotifyNoMoreTask()
@@ -43,11 +44,10 @@ void TaskThread::Run()
 	{
 		StdClosure task;
 		{
-			std::lock_guard<std::mutex> lock(lock_);
-			if (tasks_queue_.empty())
-			{
-				continue;
-			}
+			std::unique_lock<std::mutex> lock(lock_);
+			cv.wait(lock, [&]() {
+				return tasks_queue_.size();
+			});
 			task = std::move(tasks_queue_.front());
 			tasks_queue_.pop();
 		}
