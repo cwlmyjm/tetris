@@ -36,8 +36,8 @@ int main()
 	int total_cost_time = 0;
 	std::unique_ptr<TetrisInterface> solution = nullptr;
 	//solution = std::make_unique<SyncSolution>();
-	solution = std::make_unique<AsyncSolution>();
-	//solution = std::make_unique<AsyncSolutionEx>();
+	//solution = std::make_unique<AsyncSolution>();
+	solution = std::make_unique<AsyncSolutionEx>();
 	for (int i = 0; i < TEST_TIMES; i++)
 	{
 		total_cost_time += solution->tetris(i, INPUT, OUTPUT);

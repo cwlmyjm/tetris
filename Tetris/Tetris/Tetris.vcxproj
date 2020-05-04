@@ -158,6 +158,7 @@
     <ClCompile Include="StdFstream.cpp" />
     <ClCompile Include="SuperFstream.cpp" />
     <ClCompile Include="SyncSolution.cpp" />
+    <ClCompile Include="TaskThread.cpp" />
     <ClCompile Include="Tetris.cpp" />
     <ClCompile Include="TetrisBoard.cpp" />
     <ClCompile Include="TetrisItem.cpp" />
@@ -174,6 +175,7 @@
     <ClInclude Include="StdFstream.h" />
     <ClInclude Include="SuperFstream.h" />
     <ClInclude Include="SyncSolution.h" />
+    <ClInclude Include="TaskThread.h" />
     <ClInclude Include="TetrisBoard.h" />
     <ClInclude Include="TetrisInterface.h" />
     <ClInclude Include="TetrisItem.h" />

@@ -7,10 +7,10 @@
 #include <mutex>
 #include <queue>
 #include <thread>
-#include <atomic>
 #include "MyFstream.h"
 #include "StdFstream.h"
 #include "SuperFstream.h"
+#include "TaskThread.h"
 
 #define PROCESS_THREADS_COUNT 8
 
@@ -36,9 +36,12 @@ int AsyncSolutionEx::tetris(int index, const std::string& input_path, const std:
 	int total = 0;
 
 	std::vector<TetrisBoard*> boards(caseCount, nullptr);
-	std::condition_variable cv;
-	std::mutex lock;
-	std::atomic<int> alive_process_threads_count = 0;
+	std::vector<std::shared_ptr<TaskThread>> task_thread_pool(PROCESS_THREADS_COUNT, nullptr);
+	for (auto& task_thread : task_thread_pool)
+	{
+		task_thread = std::move(std::make_shared<TaskThread>(true));
+	}
+	int current_post_index = 0;
 
 	auto process_fun = [&](SingleDataEx* data)
 	{
@@ -52,10 +55,6 @@ int AsyncSolutionEx::tetris(int index, const std::string& input_path, const std:
 
 		boards[data->index] = board;
 		delete data;
-
-		// 子线程任务结束，计数器减一，并发送notify唤醒主线程。
-		alive_process_threads_count--;
-		cv.notify_one();
 	};
 
 	{
@@ -94,16 +93,11 @@ int AsyncSolutionEx::tetris(int index, const std::string& input_path, const std:
 				}
 			}
 
+			// 投递任务给子线程
 			{
-				// 如果子线程数量小于PROCESS_THREADS_COUNT，那么马上创建子线程。
-				// 否则开始等待，直到有子线程结束时发送notify来唤醒。
-				std::unique_lock<std::mutex> lock_(lock);
-				cv.wait(lock_, [&]() {
-					return alive_process_threads_count < PROCESS_THREADS_COUNT;
-				});
-				alive_process_threads_count++;
-				std::thread process_task(process_fun, data);
-				process_task.detach();
+				auto task = std::bind(process_fun, data);
+				task_thread_pool[current_post_index]->PostTask(task);
+				current_post_index = (current_post_index + 1) & (PROCESS_THREADS_COUNT - 1);
 			}
 		}
 	};
@@ -111,10 +105,14 @@ int AsyncSolutionEx::tetris(int index, const std::string& input_path, const std:
 	auto read_end = clock();
 
 	// 等待所以子线程结束任务
-	std::unique_lock<std::mutex> lock_(lock);
-	while (alive_process_threads_count)
+	for (auto& task_thread : task_thread_pool)
 	{
-		cv.wait(lock_);
+		task_thread->NotifyNoMoreTask();
+	}
+
+	for (auto& task_thread : task_thread_pool)
+	{
+		task_thread->Wait();
 	}
 
 	for (auto& board : boards)
