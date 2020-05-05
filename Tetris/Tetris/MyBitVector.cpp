@@ -3,11 +3,11 @@
 MyBitVector::MyBitVector(int size)
 	: m_size(size)
 {
-	int count = m_size / 8;
-	if (m_size % 8) count += 1;
+	m_count = m_size / 8;
+	if (m_size % 8) m_count += 1;
 
-	m_data = new char[count];
-	memset(m_data, 0, count);
+	m_data = new char[m_count];
+	memset(m_data, 0, m_count);
 }
 
 MyBitVector::~MyBitVector()
@@ -38,4 +38,10 @@ void MyBitVector::SetValue(int index, bool value)
 bool MyBitVector::AllTrue()
 {
 	return m_total == m_size;
+}
+
+void MyBitVector::ClearData()
+{
+	m_total = 0;
+	memset(m_data, 0, m_count);
 }

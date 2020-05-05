@@ -16,6 +16,8 @@ public:
 
 	virtual bool AllTrue();
 
+	virtual void ClearData();
+
 private:
 	std::vector<bool> m_data;
 	int m_size = 0;

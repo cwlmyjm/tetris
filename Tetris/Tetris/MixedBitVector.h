@@ -17,6 +17,8 @@ public:
 
 	virtual bool AllTrue();
 
+	virtual void ClearData();
+
 private:
 	std::unordered_set<int> m_data_set;
 	std::vector<bool> m_data_vector;

@@ -56,3 +56,11 @@ bool MixedBitVector::AllTrue()
 {
 	return m_total == m_size;
 }
+
+void MixedBitVector::ClearData()
+{
+	m_total = 0;
+	m_data_set.clear();
+	m_data_vector.clear();
+	m_use_set = true;
+}

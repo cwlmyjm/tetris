@@ -30,3 +30,9 @@ bool BitVector::AllTrue()
 {
 	return m_total == m_size;
 }
+
+void BitVector::ClearData()
+{
+	m_total = 0;
+	m_data = std::vector<bool>(m_size, false);
+}

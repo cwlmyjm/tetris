@@ -16,6 +16,8 @@ public:
 
 	virtual bool AllTrue() = 0;
 
+	virtual void ClearData() = 0;
+
 #if USE_MY_NEW_DELETE
 private:
 	static std::queue<void*> free_ptr_queue;

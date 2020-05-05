@@ -14,10 +14,13 @@ public:
 
 	virtual bool AllTrue();
 
+	virtual void ClearData();
+
 private:
 	char* m_data = nullptr;
 	int m_size = 0;
 	int m_total = 0;
+	int m_count = 0;
 
 };
 

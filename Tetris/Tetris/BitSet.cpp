@@ -28,3 +28,9 @@ bool BitSet::AllTrue()
 {
 	return m_total == m_size;
 }
+
+void BitSet::ClearData()
+{
+	m_total = 0;
+	m_data.clear();
+}
