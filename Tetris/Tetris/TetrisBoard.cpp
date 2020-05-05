@@ -183,17 +183,18 @@ void TetrisBoard::CheckLineClear(int row, int lens)
 	{
 		int _row = row - i;
 		auto& rowData = m_board[_row];
-		//if (std::all_of(rowData.cbegin(), rowData.cend(), [](bool input) {return input; }))
 		if (rowData->AllTrue())
 		{
 			auto it = (m_board.cbegin() + _row);
-			delete* it;
+			{
+				rowData->ClearData();
+				m_board.push_back(rowData);
+			}
 			m_board.erase(it);
 			clearLines++;
 		}
 	}
 
-	m_rowCount -= clearLines;
 	if (clearLines == 1)
 	{
 		m_score += 100;
