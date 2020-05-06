@@ -159,7 +159,7 @@ bool TetrisBoard::CanPutItem(TetrisItem* item, int row, BoardDataReverseIterator
 	return true;
 }
 
-void TetrisBoard::PutItem(TetrisItem* item, int row, BoardDataReverseIterator row_rit, int colum)
+void TetrisBoard::PutItem(TetrisItem* item, int row, BoardDataReverseIterator& row_rit, int colum)
 {
 	auto origin_rit = row_rit;
 	auto rect = item->GetRect();
@@ -180,7 +180,7 @@ void TetrisBoard::PutItem(TetrisItem* item, int row, BoardDataReverseIterator ro
 	//PrintBoard();
 }
 
-void TetrisBoard::CheckLineClear(int row, BoardDataReverseIterator row_rit, int lens)
+void TetrisBoard::CheckLineClear(int row, BoardDataReverseIterator& row_rit, int lens)
 {
 	BoardDataIterator row_it = (++row_rit).base();
 	int clearLines = 0;

@@ -28,8 +28,8 @@ public:
 private:
 	void AddFourRows();
 	bool CanPutItem(TetrisItem* itemData, int row, BoardDataReverseIterator row_rit, int colum);
-	void PutItem(TetrisItem* itemData, int row, BoardDataReverseIterator row_rit, int colum);
-	void CheckLineClear(int row, BoardDataReverseIterator row_rit, int lens);
+	void PutItem(TetrisItem* itemData, int row, BoardDataReverseIterator& row_rit, int colum);
+	void CheckLineClear(int row, BoardDataReverseIterator& row_rit, int lens);
 	bool CheckInBoard(int row, int column);
 	void PrintBoard();
 
