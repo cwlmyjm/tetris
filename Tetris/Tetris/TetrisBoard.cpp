@@ -10,6 +10,8 @@
 #define RowBelowThreshold MyBitVector
 #define RowOverThreshold MixedBitVector
 
+static int bonus_array[5] = { 0, 100, 250, 400,1000 };
+
 TetrisBoard::TetrisBoard(int columns)
 	: m_columns(columns)
 {
@@ -33,14 +35,15 @@ void TetrisBoard::PushItem(TetrisItem* item, int column)
 {
 	int row = m_rowCount - 1;
 	int targetRow = m_rowCount - 1;
-	if (CanPutItem(item, row, column))
+	BoardDataReverseIterator rit = m_board.rbegin();
+	BoardDataReverseIterator targetRit = m_board.rbegin();
+	if (CanPutItem(item, row, rit, column))
 	{
-		while (CanPutItem(item, row, column))
-		{
-			targetRow = row;
-			row--;
-		};
-		PutItem(item, targetRow, column);
+		do {
+			targetRow = row--;
+			targetRit = rit++;
+		} while (CanPutItem(item, row, rit, column));
+		PutItem(item, targetRow, targetRit, column);
 	}
 	else
 	{
@@ -57,10 +60,10 @@ int TetrisBoard::GetScore()
 
 int TetrisBoard::GetHeightOfColumns(int column)
 {
-	for (int i = 0; i < m_rowCount; i++)
+	int i = 0;
+	for (auto it = m_board.rbegin(); it != m_board.rend(); it++, i++)
 	{
-		int index = m_rowCount - 1 - i;
-		if (m_board[index]->GetValue(column))
+		if ((*it)->GetValue(column))
 		{
 			return m_rowCount - i;
 		}
@@ -127,10 +130,10 @@ void TetrisBoard::AddFourRows()
 	m_rowCount += 4;
 }
 
-bool TetrisBoard::CanPutItem(TetrisItem* item, int row, int colum)
+bool TetrisBoard::CanPutItem(TetrisItem* item, int row, BoardDataReverseIterator row_rit, int colum)
 {
 	auto rect = item->GetRect();
-	for (int i = 0; i < rect.first; i++)
+	for (int i = 0; i < rect.first; i++, row_rit++)
 	{
 		for (int j = 0; j < rect.second; j++)
 		{
@@ -146,7 +149,7 @@ bool TetrisBoard::CanPutItem(TetrisItem* item, int row, int colum)
 				continue;
 			}
 
-			auto boardElementStatus = m_board[row - i]->GetValue(colum + j);// 这里对应一下。
+			auto boardElementStatus = (*row_rit)->GetValue(colum + j);// 这里对应一下。
 			if (itemElement && boardElementStatus)
 			{
 				return false;
@@ -156,10 +159,11 @@ bool TetrisBoard::CanPutItem(TetrisItem* item, int row, int colum)
 	return true;
 }
 
-void TetrisBoard::PutItem(TetrisItem* item, int row, int colum)
+void TetrisBoard::PutItem(TetrisItem* item, int row, BoardDataReverseIterator row_rit, int colum)
 {
+	auto origin_rit = row_rit;
 	auto rect = item->GetRect();
-	for (int i = 0; i < rect.first; i++)
+	for (int i = 0; i < rect.first; i++, row_rit++)
 	{
 		for (int j = 0; j < rect.second; j++)
 		{
@@ -168,49 +172,33 @@ void TetrisBoard::PutItem(TetrisItem* item, int row, int colum)
 			{
 				continue;
 			}
-			m_board[row - i]->SetValue(colum + j, m_board[row - i]->GetValue(colum + j) || itemElement);// 这里对应一下。
+			(*row_rit)->SetValue(colum + j, (*row_rit)->GetValue(colum + j) || itemElement);// 这里对应一下。
 		}
 	}
 
-	CheckLineClear(row, rect.first);
+	CheckLineClear(row, origin_rit, rect.first);
 	//PrintBoard();
 }
 
-void TetrisBoard::CheckLineClear(int row, int lens)
+void TetrisBoard::CheckLineClear(int row, BoardDataReverseIterator row_rit, int lens)
 {
+	BoardDataIterator row_it = (++row_rit).base();
 	int clearLines = 0;
-	for (int i = 0; i < lens; i++)
+	for (int i = 0; i < lens; i++, row_it--)
 	{
-		int _row = row - i;
-		auto& rowData = m_board[_row];
+		auto& rowData = *row_it;
 		if (rowData->AllTrue())
 		{
-			auto it = (m_board.cbegin() + _row);
+			auto it = row_it;
 			{
 				rowData->ClearData();
 				m_board.push_back(rowData);
 			}
-			m_board.erase(it);
+			m_board.erase(row_it);
 			clearLines++;
 		}
 	}
-
-	if (clearLines == 1)
-	{
-		m_score += 100;
-	}
-	else if (clearLines == 2)
-	{
-		m_score += 250;
-	}
-	else if (clearLines == 3)
-	{
-		m_score += 400;
-	}
-	else if (clearLines == 4)
-	{
-		m_score += 1000;
-	}
+	m_score += bonus_array[clearLines];
 }
 
 bool TetrisBoard::CheckInBoard(int row, int column)
@@ -221,11 +209,11 @@ bool TetrisBoard::CheckInBoard(int row, int column)
 
 void TetrisBoard::PrintBoard()
 {
-	for (int i = 0; i < m_rowCount; i++)
+	for (auto it = m_board.rbegin(); it != m_board.rend(); it++)
 	{
 		for (int j = 0; j < m_columns; j++)
 		{
-			std::cout << (m_board[m_rowCount - 1 - i]->GetValue(j) ? 1 : 0);
+			std::cout << ((*it)->GetValue(j) ? 1 : 0);
 		}
 		std::cout << std::endl;
 	}

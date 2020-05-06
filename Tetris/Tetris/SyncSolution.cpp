@@ -1,5 +1,6 @@
 ﻿#include "SyncSolution.h"
 #include <iostream>
+#include <memory>
 #include "TetrisBoard.h"
 #include "TetrisItem.h"
 #include <time.h>

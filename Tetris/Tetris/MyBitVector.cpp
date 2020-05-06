@@ -20,7 +20,7 @@ bool MyBitVector::GetValue(int index)
 	int a = index >> 3;
 	int b = index & 0b111;
 
-	return m_data[a] & (0b1 << b);
+	return (m_data[a] & (0b1 << b)) > 0;
 }
 
 void MyBitVector::SetValue(int index, bool value)
