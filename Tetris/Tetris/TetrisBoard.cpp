@@ -33,17 +33,14 @@ TetrisBoard::~TetrisBoard()
 
 void TetrisBoard::PushItem(TetrisItem* item, int column)
 {
-	int row = m_rowCount - 1;
-	int targetRow = m_rowCount - 1;
 	BoardDataReverseIterator rit = m_board.rbegin();
 	BoardDataReverseIterator targetRit = m_board.rbegin();
-	if (CanPutItem(item, row, rit, column))
+	if (CanPutItem(item, rit, column))
 	{
 		do {
-			targetRow = row--;
 			targetRit = rit++;
-		} while (CanPutItem(item, row, rit, column));
-		PutItem(item, targetRow, targetRit, column);
+		} while (CanPutItem(item, rit, column));
+		PutItem(item, targetRit, column);
 	}
 	else
 	{
@@ -130,7 +127,7 @@ void TetrisBoard::AddFourRows()
 	m_rowCount += 4;
 }
 
-bool TetrisBoard::CanPutItem(TetrisItem* item, int row, BoardDataReverseIterator row_rit, int colum)
+bool TetrisBoard::CanPutItem(TetrisItem* item, BoardDataReverseIterator row_rit, int colum)
 {
 	auto rect = item->GetRect();
 	for (int i = 0; i < rect.first; i++, row_rit++)
@@ -139,12 +136,12 @@ bool TetrisBoard::CanPutItem(TetrisItem* item, int row, BoardDataReverseIterator
 		{
 			bool itemElement = item->GetValue(i, j);
 			// 向下超出了
-			if (row - i < 0)
+			if (row_rit == m_board.rend())
 			{
 				return false;
 			}
 
-			if (!CheckInBoard(row - i, colum + j))
+			if (!CheckInBoard(row_rit, colum + j))
 			{
 				continue;
 			}
@@ -159,7 +156,7 @@ bool TetrisBoard::CanPutItem(TetrisItem* item, int row, BoardDataReverseIterator
 	return true;
 }
 
-void TetrisBoard::PutItem(TetrisItem* item, int row, BoardDataReverseIterator& row_rit, int colum)
+void TetrisBoard::PutItem(TetrisItem* item, BoardDataReverseIterator& row_rit, int colum)
 {
 	auto origin_rit = row_rit;
 	auto rect = item->GetRect();
@@ -168,7 +165,7 @@ void TetrisBoard::PutItem(TetrisItem* item, int row, BoardDataReverseIterator& r
 		for (int j = 0; j < rect.second; j++)
 		{
 			bool itemElement = item->GetValue(i, j);
-			if (!CheckInBoard(row - i, colum + j))
+			if (!CheckInBoard(row_rit, colum + j))
 			{
 				continue;
 			}
@@ -176,11 +173,11 @@ void TetrisBoard::PutItem(TetrisItem* item, int row, BoardDataReverseIterator& r
 		}
 	}
 
-	CheckLineClear(row, origin_rit, rect.first);
+	CheckLineClear(origin_rit, rect.first);
 	//PrintBoard();
 }
 
-void TetrisBoard::CheckLineClear(int row, BoardDataReverseIterator& row_rit, int lens)
+void TetrisBoard::CheckLineClear(BoardDataReverseIterator& row_rit, int lens)
 {
 	BoardDataIterator row_it = (++row_rit).base();
 	int clearLines = 0;
@@ -201,9 +198,9 @@ void TetrisBoard::CheckLineClear(int row, BoardDataReverseIterator& row_rit, int
 	m_score += bonus_array[clearLines];
 }
 
-bool TetrisBoard::CheckInBoard(int row, int column)
+bool TetrisBoard::CheckInBoard(BoardDataReverseIterator& row_rit, int column)
 {
-	return 0 <= row && row < m_rowCount
+	return row_rit != m_board.rend()
 		&& 0 <= column && column < m_columns;
 }
 

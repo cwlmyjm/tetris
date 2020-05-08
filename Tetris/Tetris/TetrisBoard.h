@@ -27,10 +27,10 @@ public:
 
 private:
 	void AddFourRows();
-	bool CanPutItem(TetrisItem* itemData, int row, BoardDataReverseIterator row_rit, int colum);
-	void PutItem(TetrisItem* itemData, int row, BoardDataReverseIterator& row_rit, int colum);
-	void CheckLineClear(int row, BoardDataReverseIterator& row_rit, int lens);
-	bool CheckInBoard(int row, int column);
+	bool CanPutItem(TetrisItem* itemData, BoardDataReverseIterator row_rit, int colum);
+	void PutItem(TetrisItem* itemData, BoardDataReverseIterator& row_rit, int colum);
+	void CheckLineClear(BoardDataReverseIterator& row_rit, int lens);
+	bool CheckInBoard(BoardDataReverseIterator& row_rit, int column);
 	void PrintBoard();
 
 private:
