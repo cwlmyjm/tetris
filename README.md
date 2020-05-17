@@ -67,6 +67,14 @@ Case #2:
 The final state of the game field is shown below.
 
 ![image](https://raw.githubusercontent.com/cwlmyjm/tetris/master/README/2.jpg)
+ 
+## Submission
+
+1. Please make sure your code is readable and well-documented.
+2. You will also receive three input files: small_input.txt, medium_input.txt, and big_input.txt. Please run your program on these input files to generate their output files: small_output.txt, medium_output.txt, and big_output.txt.
+3. Also, for each output file, please compute the sum of all points of the test cases. So, for each output file, you will produce one number (total points). 
+4. Please also record the amount of time it takes your program to generate each output file. Ideally, time for each program should be below say 20 minutes.
+5. Finally, submit your source code, the three output files, three total points, and three run times.
 
 ## Question Source
 2009 Asia Shanghai Regional Contest Host by DHU  
